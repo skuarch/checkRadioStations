@@ -14,8 +14,8 @@ import org.apache.log4j.Logger;
 public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class);
-    private static int maxBytes = 1024;
-    private static int stopSeconds = 4000;
+    private static int maxBytes = 1024 * 2;
+    private static int stopSeconds = 3000;
     int port;
     boolean isActive = false;
     String ip;
