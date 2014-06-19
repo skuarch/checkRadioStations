@@ -62,7 +62,9 @@ public class StationChecker {
 
             //open the socket and output
             socket = new Socket(host, port);
-            socket.setKeepAlive(false);            
+            socket.setKeepAlive(false);   
+            socket.setSoLinger(true, stopSeconds);
+            socket.setSoTimeout(stopSeconds);
             outputStream = socket.getOutputStream();
 
             //configure the output
@@ -144,6 +146,7 @@ public class StationChecker {
             urlc.setDoOutput(true);
             urlc.setDoInput(true);
             urlc.setConnectTimeout(stopSeconds);
+            urlc.setReadTimeout(stopSeconds);            
 
             //open the input for save the data
             inputStream = urlc.getInputStream();

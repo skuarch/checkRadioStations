@@ -1,6 +1,8 @@
 package application;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 import model.beans.Station;
 import model.common.StationChecker;
 import model.dao.DAO;
@@ -14,11 +16,12 @@ import org.apache.log4j.Logger;
 public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class);
-    private static int maxBytes = 1024 * 2;
-    private static int stopSeconds = 3000;
-    int port;
-    boolean isActive = false;
-    String ip;
+    private static final int maxBytes = 1024 * 3;
+    private static final int stopSeconds = 6500;
+    private int port;
+    private boolean isActive = false;
+    private String ip;
+    private ArrayList<Station> stations = null;
 
     //==========================================================================
     /**
@@ -33,56 +36,78 @@ public class Main {
     //==========================================================================
     private void execute() {
 
-        ArrayList<Station> stations = null;
+        new Timer().scheduleAtFixedRate(new TimerTask() {
 
-        try {
+            @Override
+            public void run() {
+                try {
 
-            stations = new DAO().getArrayList(new Station());
+                    stations = new DAO().getArrayList(new Station());
 
-            for (final Station station : stations) {
+                    stations.stream().forEach((station) -> {
+                        isActive = false;
+                        isActive = checkStation(station);
+                        updateStation(station, isActive);
+                    });
 
-                isActive = false;
-                isActive = checkStation(station);
-
-                if (isActive) {
-                    station.setActive(1);
-                    new DAO().update(station);
-                } else {
-                    station.setActive(0);                    
+                } catch (Exception e) {
+                    logger.error("main", e);
                 }
-                
-                new DAO().update(station);
-
-                System.out.println("is active " + isActive + " " + station.getName() + " " + station.getUrl());
-                
 
             }
-
-        } catch (Exception e) {
-            logger.error("main", e);
-        }
+        }, 10000, 1000 * 60 * 60);
 
     }// end execute
 
     //==========================================================================
-    private synchronized boolean checkStation(Station station) {
+    private static void updateStation(final Station station, final boolean isActive) {
 
-        try {
+        new Thread(() -> {
 
-            port = StationUtilities.getPort(station.getUrl());
+            try {
 
-            if (port == -1) {
-                isActive = new StationChecker().checkStationUrl(station.getUrl(), stopSeconds, maxBytes);
-            } else {
-                ip = StationUtilities.getIPAddress(station.getUrl());
-                isActive = new StationChecker().checkStationSocket(ip, port, stopSeconds, maxBytes);
+                if (isActive) {
+                    station.setActive(1);
+                } else {
+                    station.setActive(0);
+                }
+
+                new DAO().update(station);
+
+            } catch (Exception e) {
+                logger.error("updateStation", e);
             }
 
-        } catch (Exception e) {
-            isActive = false;
+        }).start();
+
+    }
+
+    //==========================================================================
+    private synchronized boolean checkStation(final Station station) {
+
+        port = StationUtilities.getPort(station.getUrl());
+
+        if (port == -1) {
+
+            try {
+                isActive = new StationChecker().checkStationUrl(station.getUrl(), stopSeconds, maxBytes);
+            } catch (Exception e) {
+                isActive = false;
+            }
+
+        } else {
+            ip = StationUtilities.getIPAddress(station.getUrl());
+
+            try {
+                isActive = new StationChecker().checkStationSocket(ip, port, stopSeconds, maxBytes);
+            } catch (Exception e) {
+                isActive = false;
+            }
+
         }
 
         return isActive;
+
     } // end checkStation
 
 } // end class

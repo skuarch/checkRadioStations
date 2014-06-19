@@ -7,7 +7,7 @@
     <session-factory>
         
         <!-- datasource config -->
-        <property name="connection.url">jdbc:mysql://skuarch.com:3306/radio?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</property>                
+        <property name="connection.url">jdbc:mysql://skuarch.com:61254/radio?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true</property>                
         <property name="hibernate.connection.characterEncoding">UTF-8</property> 
         <property name="hibernate.connection.useUnicode">true</property> 
         <property name="c3p0.min_size">1</property>
