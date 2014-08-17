@@ -16,8 +16,8 @@ import org.apache.log4j.Logger;
 public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class);
-    private static final int maxBytes = 1024 * 3;
-    private static final int stopSeconds = 6500;
+    private static final int maxBytes = 1024 * 20;
+    private static final int stopSeconds = 3000;
     private int port;
     private boolean isActive = false;
     private String ip;
@@ -55,7 +55,8 @@ public class Main {
                 }
 
             }
-        }, 10000, 1000 * 60 * 60);
+            
+        }, 60000, 60000);
 
     }// end execute
 
@@ -105,7 +106,7 @@ public class Main {
             }
 
         }
-
+        //System.out.println(station.getName() + " " + isActive);
         return isActive;
 
     } // end checkStation

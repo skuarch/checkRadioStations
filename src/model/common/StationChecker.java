@@ -62,7 +62,7 @@ public class StationChecker {
 
             //open the socket and output
             socket = new Socket(host, port);
-            socket.setKeepAlive(false);   
+            socket.setKeepAlive(false);
             socket.setSoLinger(true, stopSeconds);
             socket.setSoTimeout(stopSeconds);
             outputStream = socket.getOutputStream();
@@ -90,11 +90,10 @@ public class StationChecker {
                     break;
                 }
 
-                if (System.currentTimeMillis() == endTime) {
-                    stationIsActive = false;
-                    break;
-                }
+            }
 
+            if (System.currentTimeMillis() >= endTime) {
+                stationIsActive = false;
             }
 
         } catch (UnknownHostException uhe) {
@@ -117,8 +116,7 @@ public class StationChecker {
 
     //==========================================================================
     /**
-     * this method use a
-     * <code>URLConnection</code> for check the station.<br/>
+     * this method use a <code>URLConnection</code> for check the station.<br/>
      *
      * @param stringUrl String
      * @return boolean
@@ -146,7 +144,7 @@ public class StationChecker {
             urlc.setDoOutput(true);
             urlc.setDoInput(true);
             urlc.setConnectTimeout(stopSeconds);
-            urlc.setReadTimeout(stopSeconds);            
+            urlc.setReadTimeout(stopSeconds);
 
             //open the input for save the data
             inputStream = urlc.getInputStream();
@@ -161,11 +159,10 @@ public class StationChecker {
                     break;
                 }
 
-                if (System.currentTimeMillis() == endTime) {
-                    stationIsActive = false;
-                    break;
-                }
+            }
 
+            if (System.currentTimeMillis() >= endTime) {
+                stationIsActive = false;
             }
 
         } catch (MalformedURLException murle) {
@@ -182,5 +179,5 @@ public class StationChecker {
         return stationIsActive;
 
     } // end checkStationUrl
-    
+
 } // end class
