@@ -17,7 +17,7 @@ public class Main {
 
     private static final Logger logger = Logger.getLogger(Main.class);
     private static final int maxBytes = 1024 * 20;
-    private static final int stopSeconds = 3000;
+    private static final int stopSeconds = 3500;
     private int port;
     private boolean isActive = false;
     private String ip;
